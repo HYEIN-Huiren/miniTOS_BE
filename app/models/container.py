@@ -1,7 +1,10 @@
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.dialects.postgresql import UUID
+# from sqlalchemy.sql import func
+
 import uuid
-from datetime import datetime
+from datetime import datetime, UTC
+
 from app.core.database import Base
 
 
@@ -13,5 +16,14 @@ class Container(Base):
 
     status = Column(String(20), nullable=False)
 
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(
+        DateTime,
+        default=datetime.now(UTC)
+        # default=func.now()
+    ) # DB 처리로 변경
+    
+    updated_at = Column(
+        DateTime,
+        default=datetime.now(UTC),
+        onupdate=datetime.now(UTC)
+    ) # DB 처리로 변경

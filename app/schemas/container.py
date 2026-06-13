@@ -5,7 +5,7 @@ from datetime import datetime
 
 class ContainerCreate(BaseModel):
     container_no: str
-    status: str
+    # status: str
 
 
 class ContainerUpdate(BaseModel):

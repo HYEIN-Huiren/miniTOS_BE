@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.core.database import SessionLocal
-from app.schemas.container import ContainerCreate, ContainerUpdate
+from app.schemas.container import ContainerCreate, ContainerUpdate, ContainerResponse
 from app.schemas.response import BaseResponse
 from app.services.container_service import ContainerService
 
@@ -21,14 +21,14 @@ def get_db():
 
 @router.post("")
 def create(payload: ContainerCreate, db: Session = Depends(get_db)):
-    data = service.create(db, payload.container_no, payload.status)
-    return BaseResponse(data=data)
+    data = service.create(db, payload.container_no)
+    return BaseResponse(data=ContainerResponse.model_validate(data))
 
 
 @router.get("/{container_id}")
 def get(container_id: str, db: Session = Depends(get_db)):
     data = service.get(db, container_id)
-    return BaseResponse(data=data)
+    return BaseResponse(data=ContainerResponse.model_validate(data))
 
 
 @router.get("")
@@ -40,7 +40,7 @@ def list_all(db: Session = Depends(get_db)):
 @router.patch("/{container_id}/status")
 def update_status(container_id: str, payload: ContainerUpdate, db: Session = Depends(get_db)):
     data = service.update_status(db, container_id, payload.status)
-    return BaseResponse(data=data)
+    return BaseResponse(data=ContainerResponse.model_validate(data))
 
 
 @router.delete("/{container_id}")

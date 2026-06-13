@@ -9,12 +9,12 @@ class ContainerService:
     def __init__(self):
         self.repo = ContainerRepository()
 
-    def create(self, db, container_no, status):
+    def create(self, db, container_no):
         logger.info("create_container", container_no=container_no)
         
         obj = Container(
             container_no=container_no,
-            status=status
+            status= "INBOUND"
         )
         return self.repo.create(db, obj)
 
