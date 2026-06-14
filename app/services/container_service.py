@@ -3,6 +3,8 @@ from app.repositories.container_repository import ContainerRepository
 from app.core.logger import logger
 from app.core.exceptions import NotFoundException
 
+from app.models.container_event import ContainerEvent
+
 
 class ContainerService:
 
@@ -16,7 +18,18 @@ class ContainerService:
             container_no=container_no,
             status= "INBOUND"
         )
-        return self.repo.create(db, obj)
+        
+        obj = self.repo.create(db, obj)
+        
+        event = ContainerEvent(
+            container_id=obj.container_id,
+            status="INBOUND"
+        )
+        
+        db.add(event)
+        db.commit()
+        
+        return obj
 
     def get(self, db, container_id):
         obj = self.repo.get(db, container_id)
@@ -30,7 +43,21 @@ class ContainerService:
         return self.repo.get_all(db)
 
     def update_status(self, db, container_id, status):
-        return self.repo.update_status(db, container_id, status)
+        obj = self.repo.update_status(
+            db,
+            container_id,
+            status
+        )
+        
+        event = ContainerEvent(
+            container_id=obj.container_id,
+            status=status
+        )
+        
+        db.add(event)
+        db.commit()
+        
+        return obj
 
     def delete(self, db, container_id):
         return self.repo.delete(db, container_id)
