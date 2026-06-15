@@ -14,6 +14,11 @@ class Settings:
     
     FE_HOST: str = os.getenv("FE_HOST")
     FE_PORT: str = os.getenv("FE_PORT")
+    
+    SECRET_KEY: str = os.getenv("SECRET_KEY")
+    ALGORITHM: str = os.getenv("ALGORITHM")
+    ACCESS_TOKEN_EXPIRE_MINUTES: str = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES"))
+    
 
     @property
     def DATABASE_URL(self) -> str:

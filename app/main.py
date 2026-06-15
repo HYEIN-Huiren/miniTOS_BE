@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from app.core.database import Base, engine
 from app.core.middleware import log_requests
 from app.api.container_router import router as container_router
+from app.api.auth_router import router as auth_router
 from app.core.config import settings
 
 
@@ -33,6 +34,7 @@ app.middleware("http")(log_requests)
 # =========================
 # Routers
 # =========================
+app.include_router(auth_router)
 app.include_router(container_router)
 
 from fastapi.middleware.cors import CORSMiddleware

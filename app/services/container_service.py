@@ -1,3 +1,5 @@
+from fastapi import HTTPException, status
+
 from app.models.container import Container
 from app.repositories.container_repository import ContainerRepository
 from app.core.logger import logger
@@ -59,5 +61,11 @@ class ContainerService:
         
         return obj
 
-    def delete(self, db, container_id):
+    def delete(self, db, container_id, current_user):
+        
+        if current_user.role != "ADMIN":
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Admin only",
+            )
         return self.repo.delete(db, container_id)
