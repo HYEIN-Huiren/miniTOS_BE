@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
 from app.dependencies.auth import get_current_user
-from app.models.user import User
+from app.dependencies.role import require_roles
 
 from app.schemas.container import ContainerCreate, ContainerUpdate, ContainerResponse
 from app.schemas.container_event import EventResponse
@@ -20,7 +20,7 @@ event_service = EventService()
 @router.post("")
 def create(payload: ContainerCreate, 
            db: Session = Depends(get_db), 
-           current_user = Depends(get_current_user)
+           current_user = Depends(require_roles("ADMIN", "OPERATOR"))
         ):
 
     data = service.create(db, payload.container_no)
@@ -50,7 +50,7 @@ def update_status(
     container_id: str, 
     payload: ContainerUpdate, 
     db: Session = Depends(get_db), 
-    current_user = Depends(get_current_user)
+    current_user = Depends(require_roles("ADMIN", "OPERATOR"))
 ):
     data = service.update_status(db, container_id, payload.status)
     return BaseResponse(data=ContainerResponse.model_validate(data))
@@ -60,7 +60,7 @@ def update_status(
 def delete(
     container_id: str, 
     db: Session = Depends(get_db), 
-    current_user = Depends(get_current_user)
+    current_user = Depends(require_roles("ADMIN", "OPERATOR"))
 ):
     service.delete(db, container_id, current_user)
     return BaseResponse(message="deleted")

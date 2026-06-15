@@ -61,11 +61,15 @@ class ContainerService:
         
         return obj
 
+
+// event FK 문제 해결
+
     def delete(self, db, container_id, current_user):
         
-        if current_user.role != "ADMIN":
+        if current_user.role not in ["ADMIN", "OPERATOR"]:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="Admin only",
+                detail="Admin or Operator only",
             )
+
         return self.repo.delete(db, container_id)
