@@ -26,16 +26,15 @@ class ContainerEvent(Base):
         ForeignKey("container.container_id"),
         nullable=False,
     )
+    # cycle_id = Column(UUID(as_uuid=True), nullable=True)
+    
+    event_type = Column(String(30), nullable=False)
+
+    from_status = Column(String(20), nullable=True)
 
     status = Column(
         String(20),
         nullable=False,
-    )
-
-    event_time = Column(
-        DateTime,
-        nullable=False,
-        default=func.now(),
     )
 
     created_at = Column(

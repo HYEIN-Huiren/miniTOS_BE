@@ -5,33 +5,15 @@ from app.repositories.container_repository import ContainerRepository
 from app.core.logger import logger
 from app.core.exceptions import NotFoundException
 
-from app.models.container_event import ContainerEvent
-
-
 class ContainerService:
 
     def __init__(self):
         self.repo = ContainerRepository()
 
-    def create(self, db, container_no):
+    def create(self, db, container_no, status="REGISTERED"):
         logger.info("create_container", container_no=container_no)
-        
-        obj = Container(
-            container_no=container_no,
-            status= "INBOUND"
-        )
-        
-        obj = self.repo.create(db, obj)
-        
-        event = ContainerEvent(
-            container_id=obj.container_id,
-            status="INBOUND"
-        )
-        
-        db.add(event)
-        db.commit()
-        
-        return obj
+        obj = Container(container_no=container_no, status = status)
+        return self.repo.create(db, obj)
 
     def get(self, db, container_id):
         obj = self.repo.get(db, container_id)
@@ -44,25 +26,14 @@ class ContainerService:
     def get_all(self, db):
         return self.repo.get_all(db)
 
-    def update_status(self, db, container_id, status):
+    def update_status(self, db, container_id, to_status):
         obj = self.repo.update_status(
             db,
             container_id,
-            status
+            status=to_status
         )
-        
-        event = ContainerEvent(
-            container_id=obj.container_id,
-            status=status
-        )
-        
-        db.add(event)
-        db.commit()
-        
         return obj
 
-
-// event FK 문제 해결
 
     def delete(self, db, container_id, current_user):
         

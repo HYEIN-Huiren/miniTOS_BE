@@ -4,7 +4,8 @@ from sqlalchemy.orm import Session
 from app.dependencies.auth import get_current_user
 from app.dependencies.role import require_roles
 
-from app.schemas.container import ContainerCreate, ContainerUpdate, ContainerResponse
+from app.schemas.container import ContainerCreate, ContainerResponse
+from app.schemas.container_event import EventCreate
 from app.schemas.container_event import EventResponse
 from app.schemas.response import BaseResponse
 from app.services.container_service import ContainerService
@@ -19,11 +20,11 @@ event_service = EventService()
 
 @router.post("")
 def create(payload: ContainerCreate, 
-           db: Session = Depends(get_db), 
-           current_user = Depends(require_roles("ADMIN", "OPERATOR"))
-        ):
+            db: Session = Depends(get_db), 
+            current_user = Depends(require_roles("ADMIN", "OPERATOR"))
+         ):
 
-    data = service.create(db, payload.container_no)
+    data = event_service.create_event(db, to_status="REGISTERED",event_type="REGISTER", container_no=payload.container_no)
     return BaseResponse(data=ContainerResponse.model_validate(data))
 
 
@@ -45,15 +46,15 @@ def list_all(
     return BaseResponse(data=data)
 
 
-@router.patch("/{container_id}/status")
-def update_status(
-    container_id: str, 
-    payload: ContainerUpdate, 
-    db: Session = Depends(get_db), 
-    current_user = Depends(require_roles("ADMIN", "OPERATOR"))
-):
-    data = service.update_status(db, container_id, payload.status)
-    return BaseResponse(data=ContainerResponse.model_validate(data))
+# @router.patch("/{container_id}/status")
+# def update_status(
+#     container_id: str, 
+#     payload: ContainerUpdate, 
+#     db: Session = Depends(get_db), 
+#     current_user = Depends(require_roles("ADMIN", "OPERATOR"))
+# ):
+#     data = service.update_status(db, container_id, payload.status)
+#     return BaseResponse(data=ContainerResponse.model_validate(data))
 
 
 @router.delete("/{container_id}")
@@ -64,6 +65,7 @@ def delete(
 ):
     service.delete(db, container_id, current_user)
     return BaseResponse(message="deleted")
+
 
 @router.get("/{container_id}/events")
 def get_events(
@@ -81,3 +83,42 @@ def get_events(
     ]
 
     return BaseResponse(data=data)
+
+# =========================
+# REGISTER (container 생성 + event 자동 발생)
+# =========================
+@router.post("")
+def register_container(
+    payload: ContainerCreate,
+    db: Session = Depends(get_db),
+    current_user = Depends(require_roles("ADMIN", "OPERATOR"))
+):
+    data = event_service.create_event(
+        db=db,
+        container_id=None,
+        container_no=payload.container_no,
+        event_type="REGISTER",
+        to_status="REGISTERED",
+    )
+
+    return BaseResponse(data=ContainerResponse.model_validate(data))
+
+
+# =========================
+# EVENT (CORE FLOW)
+# =========================
+@router.post("/{container_id}/events")
+def create_event(
+    container_id: str,
+    payload: EventCreate,
+    db: Session = Depends(get_db),
+    current_user = Depends(require_roles("ADMIN", "OPERATOR"))
+):
+    data = event_service.create_event(
+        db=db,
+        container_id=container_id,
+        event_type=payload.event_type,
+        to_status=payload.status,
+    )
+
+    return BaseResponse(data=ContainerResponse.model_validate(data))

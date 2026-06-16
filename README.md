@@ -32,10 +32,11 @@
 - 개별 컨테이너 삭제
 - 컨테이너 상태 변경
 - 상태별 컨테이너 집계 조회
+- Event 관리
 
 #### V2 (향후)
 
-* AX 추가 (Event 관리)
+
 * 야드 적치 위치 관리
 
 #### V3 (향후)
@@ -71,6 +72,7 @@
 * React.js
 * TypeScript
 * Axios
+* zustand
 
 ### Infra
 

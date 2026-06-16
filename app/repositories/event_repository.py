@@ -15,7 +15,7 @@ class EventRepository:
                 == container_id
             )
             .order_by(
-                ContainerEvent.event_time.desc()
+                ContainerEvent.created_at.desc()
             )
             .all()
         )
@@ -28,7 +28,7 @@ class EventRepository:
         return (
             db.query(ContainerEvent)
             .order_by(
-                ContainerEvent.event_time.desc()
+                ContainerEvent.created_at.desc()
             )
             .limit(limit)
             .all()
