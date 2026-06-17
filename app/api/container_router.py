@@ -18,16 +18,6 @@ router = APIRouter(prefix="/containers", tags=["Containers"])
 service = ContainerService()
 event_service = EventService()
 
-@router.post("")
-def create(payload: ContainerCreate, 
-            db: Session = Depends(get_db), 
-            current_user = Depends(require_roles("ADMIN", "OPERATOR"))
-         ):
-
-    data = event_service.create_event(db, to_status="REGISTERED",event_type="REGISTER", container_no=payload.container_no)
-    return BaseResponse(data=ContainerResponse.model_validate(data))
-
-
 @router.get("/{container_id}")
 def get(container_id: str, 
         db: Session = Depends(get_db), 
@@ -44,17 +34,6 @@ def list_all(
 ):
     data = service.get_all(db)
     return BaseResponse(data=data)
-
-
-# @router.patch("/{container_id}/status")
-# def update_status(
-#     container_id: str, 
-#     payload: ContainerUpdate, 
-#     db: Session = Depends(get_db), 
-#     current_user = Depends(require_roles("ADMIN", "OPERATOR"))
-# ):
-#     data = service.update_status(db, container_id, payload.status)
-#     return BaseResponse(data=ContainerResponse.model_validate(data))
 
 
 @router.delete("/{container_id}")
@@ -85,20 +64,17 @@ def get_events(
     return BaseResponse(data=data)
 
 # =========================
-# REGISTER (container 생성 + event 자동 발생)
+# REGISTER container 생성
 # =========================
 @router.post("")
-def register_container(
+def create(
     payload: ContainerCreate,
     db: Session = Depends(get_db),
     current_user = Depends(require_roles("ADMIN", "OPERATOR"))
 ):
-    data = event_service.create_event(
+    data = service.create(
         db=db,
-        container_id=None,
         container_no=payload.container_no,
-        event_type="REGISTER",
-        to_status="REGISTERED",
     )
 
     return BaseResponse(data=ContainerResponse.model_validate(data))

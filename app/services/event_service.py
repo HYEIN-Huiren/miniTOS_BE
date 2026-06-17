@@ -18,32 +18,14 @@ class EventService:
     def get_recent(self, db):
         return self.repo.get_recent(db)
     
-    def create_event(self, db, to_status, event_type, container_id=None, container_no=None):
-
-        from_status = None
+    def create_event(self, db,container_id, to_status, event_type):
 
         # =========================
         # 1. 컨테이너 조회 or 생성
         # =========================
-        if container_id:
-            obj = self.container_service.get(db, container_id)
-            from_status = obj.status
-
-        else:
-            if event_type != "REGISTER":
-                raise Exception("Container not found")
-
-            if not container_no:
-                raise Exception("container_no required for REGISTER")
-            
-            to_status = "REGISTERED"
-            from_status = None
-
-            obj = self.container_service.create(
-                db,
-                container_no=container_no,
-                status=to_status
-            )
+        
+        obj = self.container_service.get(db, container_id)
+        from_status = obj.status
 
         # =========================
         # 2. event 생성
