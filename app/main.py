@@ -7,6 +7,7 @@ from app.core.middleware import log_requests
 from app.api.container_router import router as container_router
 from app.api.auth_router import router as auth_router
 from app.api.user_router import router as user_router
+from app.api.yard_router import router as yard_router
 from app.core.config import settings
 
 
@@ -39,7 +40,7 @@ app.middleware("http")(log_requests)
 app.include_router(auth_router)
 app.include_router(container_router)
 app.include_router(user_router)
-
+app.include_router(yard_router)
 
 
 app.add_middleware(
