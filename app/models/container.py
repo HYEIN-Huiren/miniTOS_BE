@@ -1,5 +1,7 @@
-from sqlalchemy import Column, String, DateTime
+from sqlalchemy import Column, String, DateTime, Integer, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
+
+from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 
 import uuid
@@ -15,6 +17,10 @@ class Container(Base):
     container_no = Column(String(20), unique=True, nullable=False)
 
     status = Column(String(20), nullable=False)
+    
+    yard_id = Column(Integer, ForeignKey("yards.yard_id"), nullable=True,)
+    
+    yard = relationship("Yard")
 
     created_at = Column(
         DateTime,

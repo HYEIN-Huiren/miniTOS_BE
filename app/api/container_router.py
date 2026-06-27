@@ -95,6 +95,7 @@ def create_event(
         container_id=container_id,
         event_type=payload.event_type,
         to_status=payload.status,
+        yard_id=payload.yard_id,
     )
 
     return BaseResponse(data=ContainerResponse.model_validate(data))

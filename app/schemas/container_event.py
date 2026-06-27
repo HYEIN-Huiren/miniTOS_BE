@@ -6,6 +6,7 @@ from pydantic import ConfigDict
 class EventCreate(BaseModel):
     event_type: str
     status: str
+    yard_id : int | None = None
     
 class EventResponse(BaseModel):
     event_id: UUID

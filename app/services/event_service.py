@@ -18,7 +18,7 @@ class EventService:
     def get_recent(self, db):
         return self.repo.get_recent(db)
     
-    def create_event(self, db,container_id, to_status, event_type):
+    def create_event(self, db,container_id, to_status, event_type, yard_id = None):
 
         # =========================
         # 1. 컨테이너 조회 or 생성
@@ -45,7 +45,8 @@ class EventService:
         updated = self.container_service.update_status(
             db,
             obj.container_id,
-            to_status = to_status
+            to_status = to_status,
+            yard_id = yard_id
         )
         
         db.commit()

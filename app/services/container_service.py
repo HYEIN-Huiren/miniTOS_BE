@@ -26,11 +26,12 @@ class ContainerService:
     def get_all(self, db):
         return self.repo.get_all(db)
 
-    def update_status(self, db, container_id, to_status):
+    def update_status(self, db, container_id, to_status, yard_id = None):
         obj = self.repo.update_status(
             db,
             container_id,
-            status=to_status
+            status=to_status,
+            yard_id = yard_id
         )
         return obj
 

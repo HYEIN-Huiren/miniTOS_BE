@@ -31,10 +31,11 @@ class ContainerRepository:
     def get_all(self, db: Session):
         return [container_to_dict(c) for c in db.query(Container).all()]
 
-    def update_status(self, db: Session, container_id, status: str):
+    def update_status(self, db: Session, container_id, status: str, yard_id):
         obj = self.get(db, container_id)
         if obj:
             obj.status = status
+            obj.yard_id = yard_id
             db.commit()
             db.refresh(obj)
         return obj
